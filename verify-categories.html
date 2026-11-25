@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Grid Verification</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #4ec9b0;
+            border-bottom: 2px solid #3e3e42;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            background: #252526;
+            border: 1px solid #3e3e42;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        h2 {
+            color: #4ec9b0;
+            margin-top: 0;
+        }
+        pre {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            border-left: 4px solid #007acc;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .success {
+            color: #4ec9b0;
+        }
+        .error {
+            color: #f48771;
+        }
+        .warning {
+            color: #ce9178;
+        }
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #1177bb;
+        }
+        #status {
+            margin-top: 15px;
+            padding: 10px;
+            background: #1e1e1e;
+            border-radius: 4px;
+            border-left: 4px solid #ce9178;
+        }
+        .result-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #1e1e1e;
+            border-radius: 4px;
+        }
+        iframe {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Category Grid Verification - Aashish Trading Demo</h1>
+    
+    <div class="test-section">
+        <h2>Test Controls</h2>
+        <button onclick="runTest()">▶ Run Grid Verification</button>
+        <button onclick="openMainSite()">🌐 Open Main Site</button>
+        <div id="status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Verification Results</h2>
+        <div id="results">Click "Run Grid Verification" to test the 4-column layout...</div>
+    </div>
+
+    <iframe id="testFrame"></iframe>
+
+    <script>
+        function openMainSite() {
+            window.open('http://localhost:5500/index.html#home', '_blank');
+            document.getElementById('status').innerHTML = '<span class="success">✓ Main site opened in new tab</span>';
+        }
+
+        function runTest() {
+            const iframe = document.getElementById('testFrame');
+            iframe.src = 'http://localhost:5500/index.html#home';
+
+            document.getElementById('status').innerHTML = '<span class="warning">⏳ Loading page and checking grid...</span>';
+            document.getElementById('results').innerHTML = '<span class="warning">Please wait...</span>';
+
+            iframe.onload = () => {
+                setTimeout(() => {
+                    try {
+                        const doc = iframe.contentDocument || iframe.contentWindow.document;
+                        const cards = [...doc.querySelectorAll('.category-card')];
+                        
+                        if (cards.length === 0) {
+                            document.getElementById('results').innerHTML = 
+                                '<pre class="error">❌ ERROR: No .category-card elements found!</pre>';
+                            document.getElementById('status').innerHTML = 
+                                '<span class="error">✗ Test failed - no cards found</span>';
+                            return;
+                        }
+
+                        // Run the exact command the user specified
+                        const positions = cards.map(c => ({
+                            x: Math.round(c.getBoundingClientRect().left),
+                            w: Math.round(c.getBoundingClientRect().width)
+                        }));
+
+                        // Count distinct x positions (columns)
+                        const uniqueX = [...new Set(positions.map(p => p.x))].sort((a, b) => a - b);
+                        
+                        let html = '<h3>Console Output (as requested):</h3>';
+                        html += '<pre class="success">';
+                        html += JSON.stringify(positions, null, 2);
+                        html += '</pre>';
+
+                        html += '<h3>Analysis:</h3>';
+                        html += '<div class="result-item">';
+                        html += `<strong>Total Cards:</strong> ${cards.length} ${cards.length === 8 ? '<span class="success">✓</span>' : '<span class="error">✗ (expected 8)</span>'}<br>`;
+                        html += `<strong>Columns Detected:</strong> ${uniqueX.length} ${uniqueX.length === 4 ? '<span class="success">✓ (4 columns as required)</span>' : '<span class="error">✗ (expected 4)</span>'}<br>`;
+                        html += `<strong>Column Positions:</strong> ${uniqueX.join('px, ')}px<br>`;
+                        
+                        // Check if all cards have equal width
+                        const widths = [...new Set(positions.map(p => p.w))];
+                        html += `<strong>Card Widths:</strong> ${widths.length === 1 ? `${widths[0]}px (all equal) <span class="success">✓</span>` : `Varying (${widths.join(', ')}) <span class="error">✗</span>`}<br>`;
+                        
+                        // Check rows
+                        const cardsPerRow = Math.ceil(cards.length / uniqueX.length);
+                        html += `<strong>Layout:</strong> ${uniqueX.length} columns × ${cardsPerRow} rows = ${uniqueX.length * cardsPerRow} slots (${cards.length} cards) `;
+                        
+                        if (uniqueX.length === 4 && cards.length === 8) {
+                            html += '<span class="success">✓ Perfect 2 full rows of 4!</span>';
+                        } else {
+                            html += '<span class="error">✗</span>';
+                        }
+                        html += '</div>';
+
+                        // Check colors
+                        html += '<h3>Category Colors Check:</h3>';
+                        const colorCheck = cards.map((card, i) => {
+                            const icon = card.querySelector('.category-icon');
+                            const name = card.querySelector('.category-name').textContent.trim();
+                            const count = card.querySelector('.category-count');
+                            const bgColor = icon ? window.getComputedStyle(icon).backgroundColor : 'N/A';
+                            
+                            return {
+                                index: i + 1,
+                                name: name,
+                                hasCount: count !== null,
+                                countText: count ? count.textContent : 'Missing',
+                                bgColor: bgColor
+                            };
+                        });
+
+                        colorCheck.forEach(c => {
+                            html += '<div class="result-item">';
+                            html += `<strong>${c.index}. ${c.name}:</strong><br>`;
+                            html += `Background: ${c.bgColor}<br>`;
+                            html += `Count: ${c.hasCount ? `<span class="success">${c.countText} ✓</span>` : '<span class="error">Missing ✗</span>'}`;
+                            html += '</div>';
+                        });
+
+                        const allPassed = uniqueX.length === 4 && cards.length === 8 && widths.length === 1;
+
+                        document.getElementById('status').innerHTML = allPassed
+                            ? '<span class="success">✓ Perfect! 8 cards in 2 full rows of 4 columns!</span>'
+                            : '<span class="error">✗ Grid layout needs adjustment. See analysis above.</span>';
+
+                        document.getElementById('results').innerHTML = html;
+
+                    } catch (e) {
+                        document.getElementById('results').innerHTML = 
+                            `<pre class="error">❌ ERROR: ${e.message}\n\nMake sure the server is running at http://localhost:5500</pre>`;
+                        document.getElementById('status').innerHTML = 
+                            '<span class="error">✗ Test failed - see error above</span>';
+                    }
+                }, 1500);
+            };
+
+            iframe.onerror = () => {
+                document.getElementById('results').innerHTML = 
+                    '<pre class="error">❌ ERROR: Could not load the page. Make sure the server is running.</pre>';
+                document.getElementById('status').innerHTML = 
+                    '<span class="error">✗ Connection failed</span>';
+            };
+        }
+    </script>
+</body>
+</html>

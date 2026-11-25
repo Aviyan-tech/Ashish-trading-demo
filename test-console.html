@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Console Test Results</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .test-section {
+            background: #252526;
+            border: 1px solid #3e3e42;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #4ec9b0;
+            margin-top: 0;
+        }
+        pre {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            border-left: 4px solid #007acc;
+        }
+        .error {
+            color: #f48771;
+        }
+        .success {
+            color: #4ec9b0;
+        }
+        .warning {
+            color: #ce9178;
+        }
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #1177bb;
+        }
+        #status {
+            margin-top: 10px;
+            padding: 10px;
+            background: #1e1e1e;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Aashish Trading Demo - Console Test Results</h1>
+    
+    <div class="test-section">
+        <h2>Test Controls</h2>
+        <button onclick="runImageTest()">Run Image Check</button>
+        <button onclick="runSearchBarTest()">Run Search Bar Alignment Check</button>
+        <button onclick="runAllTests()">Run All Tests</button>
+        <button onclick="openMainSite()">Open Main Site</button>
+        <div id="status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>1. Hero Image Test</h2>
+        <div id="imageResults">Click "Run Image Check" to test...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Search Bar Alignment Test</h2>
+        <div id="searchResults">Click "Run Search Bar Alignment Check" to test...</div>
+    </div>
+
+    <script>
+        function openMainSite() {
+            window.open('http://localhost:5500/index.html#home', '_blank');
+            document.getElementById('status').innerHTML = '<span class="success">✓ Main site opened in new tab. Wait 2-3 seconds for images to load, then run tests.</span>';
+        }
+
+        function runImageTest() {
+            const iframe = document.createElement('iframe');
+            iframe.src = 'http://localhost:5500/index.html#home';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+
+            document.getElementById('status').innerHTML = '<span class="warning">⏳ Loading page...</span>';
+
+            iframe.onload = () => {
+                setTimeout(() => {
+                    try {
+                        const doc = iframe.contentDocument || iframe.contentWindow.document;
+                        const images = [...doc.querySelectorAll('.hero-image')];
+                        
+                        if (images.length === 0) {
+                            document.getElementById('imageResults').innerHTML = 
+                                '<pre class="error">ERROR: No .hero-image elements found!</pre>';
+                            return;
+                        }
+
+                        const results = images.map(img => {
+                            const rect = img.getBoundingClientRect();
+                            const computedStyle = doc.defaultView.getComputedStyle(img);
+                            return {
+                                src: img.getAttribute('src'),
+                                loaded: img.complete && img.naturalWidth > 0,
+                                w: img.naturalWidth,
+                                h: img.naturalHeight,
+                                shownWidth: Math.round(rect.width),
+                                shownHeight: Math.round(rect.height),
+                                hidden: img.classList.contains('hidden'),
+                                display: computedStyle.display,
+                                opacity: computedStyle.opacity,
+                                zIndex: computedStyle.zIndex
+                            };
+                        });
+
+                        let html = '<pre>';
+                        results.forEach((r, i) => {
+                            const passed = r.loaded && r.w > 200 && r.shownWidth > 200;
+                            html += `<span class="${passed ? 'success' : 'error'}">Image ${i + 1}: ${passed ? '✓ PASS' : '✗ FAIL'}</span>\n`;
+                            html += JSON.stringify(r, null, 2) + '\n\n';
+                        });
+                        html += '</pre>';
+
+                        const allPassed = results.every(r => r.loaded && r.w > 200 && r.shownWidth > 200);
+                        document.getElementById('status').innerHTML = allPassed
+                            ? '<span class="success">✓ All images loaded correctly!</span>'
+                            : '<span class="error">✗ Some images failed to load. See details above.</span>';
+
+                        document.getElementById('imageResults').innerHTML = html;
+                    } catch (e) {
+                        document.getElementById('imageResults').innerHTML = 
+                            `<pre class="error">ERROR: ${e.message}</pre>`;
+                    }
+                    document.body.removeChild(iframe);
+                }, 3000); // Wait 3 seconds for images to load
+            };
+        }
+
+        function runSearchBarTest() {
+            const iframe = document.createElement('iframe');
+            iframe.src = 'http://localhost:5500/index.html#home';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+
+            document.getElementById('status').innerHTML = '<span class="warning">⏳ Loading page...</span>';
+
+            iframe.onload = () => {
+                setTimeout(() => {
+                    try {
+                        const doc = iframe.contentDocument || iframe.contentWindow.document;
+                        
+                        const getCenter = (selector) => {
+                            const el = doc.querySelector(selector);
+                            if (!el) throw new Error(`Element not found: ${selector}`);
+                            const rect = el.getBoundingClientRect();
+                            return rect.top + rect.height / 2;
+                        };
+
+                        const results = {
+                            inputVsBar: Math.abs(getCenter('#searchInput') - getCenter('.search-bar')),
+                            btnVsBar: Math.abs(getCenter('.search-btn') - getCenter('.search-bar')),
+                            iconVsText: Math.abs(getCenter('.search-btn svg') - getCenter('.search-btn span')),
+                            logoVsBar: Math.abs(getCenter('.logo') - getCenter('.search-bar'))
+                        };
+
+                        const allPassed = Object.values(results).every(v => v <= 1);
+
+                        let html = '<pre>';
+                        Object.entries(results).forEach(([key, value]) => {
+                            const passed = value <= 1;
+                            html += `<span class="${passed ? 'success' : 'error'}">${key}: ${value.toFixed(2)}px ${passed ? '✓ PASS' : '✗ FAIL (must be ≤1)'}</span>\n`;
+                        });
+                        html += '</pre>';
+
+                        document.getElementById('status').innerHTML = allPassed
+                            ? '<span class="success">✓ Search bar perfectly aligned!</span>'
+                            : '<span class="error">✗ Search bar alignment issues detected. See details above.</span>';
+
+                        document.getElementById('searchResults').innerHTML = html;
+                    } catch (e) {
+                        document.getElementById('searchResults').innerHTML = 
+                            `<pre class="error">ERROR: ${e.message}</pre>`;
+                    }
+                    document.body.removeChild(iframe);
+                }, 1000);
+            };
+        }
+
+        function runAllTests() {
+            runImageTest();
+            setTimeout(() => {
+                runSearchBarTest();
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hero Image Verification</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #4ec9b0;
+            border-bottom: 2px solid #3e3e42;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            background: #252526;
+            border: 1px solid #3e3e42;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        h2 {
+            color: #4ec9b0;
+            margin-top: 0;
+        }
+        pre {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            border-left: 4px solid #007acc;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .success {
+            color: #4ec9b0;
+        }
+        .error {
+            color: #f48771;
+        }
+        .warning {
+            color: #ce9178;
+        }
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #1177bb;
+        }
+        #status {
+            margin-top: 15px;
+            padding: 10px;
+            background: #1e1e1e;
+            border-radius: 4px;
+            border-left: 4px solid #ce9178;
+        }
+        .result-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #1e1e1e;
+            border-radius: 4px;
+        }
+        iframe {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Hero Image Verification - Aashish Trading Demo</h1>
+    
+    <div class="test-section">
+        <h2>Test Controls</h2>
+        <button onclick="runTest()">▶ Run Verification Test</button>
+        <button onclick="openMainSite()">🌐 Open Main Site</button>
+        <div id="status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Verification Results</h2>
+        <div id="results">Click "Run Verification Test" to check hero images...</div>
+    </div>
+
+    <iframe id="testFrame"></iframe>
+
+    <script>
+        function openMainSite() {
+            window.open('http://localhost:5500/index.html#home', '_blank');
+            document.getElementById('status').innerHTML = '<span class="success">✓ Main site opened in new tab</span>';
+        }
+
+        function runTest() {
+            const iframe = document.getElementById('testFrame');
+            iframe.src = 'http://localhost:5500/index.html#home';
+
+            document.getElementById('status').innerHTML = '<span class="warning">⏳ Loading page and checking images...</span>';
+            document.getElementById('results').innerHTML = '<span class="warning">Please wait...</span>';
+
+            iframe.onload = () => {
+                // Wait for images to load
+                setTimeout(() => {
+                    try {
+                        const doc = iframe.contentDocument || iframe.contentWindow.document;
+                        const images = [...doc.querySelectorAll('.hero-image')];
+                        
+                        if (images.length === 0) {
+                            document.getElementById('results').innerHTML = 
+                                '<pre class="error">❌ ERROR: No .hero-image elements found!</pre>';
+                            document.getElementById('status').innerHTML = 
+                                '<span class="error">✗ Test failed - no images found</span>';
+                            return;
+                        }
+
+                        // Run the exact command the user specified
+                        const results = images.map(img => {
+                            const rect = img.getBoundingClientRect();
+                            return {
+                                w: Math.round(rect.width),
+                                h: Math.round(rect.height),
+                                natural: img.naturalWidth + 'x' + img.naturalHeight
+                            };
+                        });
+
+                        // Check if images are landscape
+                        let html = '<h3>Console Output (as requested):</h3>';
+                        html += '<pre class="success">';
+                        html += JSON.stringify(results, null, 2);
+                        html += '</pre>';
+
+                        html += '<h3>Analysis:</h3>';
+                        
+                        results.forEach((r, i) => {
+                            const isLandscape = r.w > r.h;
+                            const isWideEnough = r.w >= 500;
+                            const [natW, natH] = r.natural.split('x').map(Number);
+                            const isNaturalLandscape = natW > natH;
+                            const isNaturalWideEnough = natW >= 1200;
+                            
+                            const passed = isLandscape && isWideEnough && isNaturalLandscape && isNaturalWideEnough;
+                            
+                            html += '<div class="result-item">';
+                            html += `<strong>Image ${i + 1}: ${passed ? '<span class="success">✓ PASS</span>' : '<span class="error">✗ FAIL</span>'}</strong><br>`;
+                            html += `Displayed: ${r.w}×${r.h} - ${isLandscape ? '<span class="success">Landscape ✓</span>' : '<span class="error">Portrait ✗</span>'} ${isWideEnough ? '<span class="success">(≥500px ✓)</span>' : '<span class="error">(&lt;500px ✗)</span>'}<br>`;
+                            html += `Natural size: ${r.natural} - ${isNaturalLandscape ? '<span class="success">Landscape ✓</span>' : '<span class="error">Portrait ✗</span>'} ${isNaturalWideEnough ? '<span class="success">(≥1200px ✓)</span>' : '<span class="error">(&lt;1200px ✗)</span>'}`;
+                            html += '</div>';
+                        });
+
+                        const allPassed = results.every((r, i) => {
+                            const [natW, natH] = r.natural.split('x').map(Number);
+                            return r.w > r.h && r.w >= 500 && natW > natH && natW >= 1200;
+                        });
+
+                        document.getElementById('status').innerHTML = allPassed
+                            ? '<span class="success">✓ All images are landscape and correctly sized!</span>'
+                            : '<span class="error">✗ Some images need fixing. See analysis above.</span>';
+
+                        document.getElementById('results').innerHTML = html;
+
+                    } catch (e) {
+                        document.getElementById('results').innerHTML = 
+                            `<pre class="error">❌ ERROR: ${e.message}\n\nMake sure the server is running at http://localhost:5500</pre>`;
+                        document.getElementById('status').innerHTML = 
+                            '<span class="error">✗ Test failed - see error above</span>';
+                    }
+                }, 2000); // Wait 2 seconds for images to load
+            };
+
+            iframe.onerror = () => {
+                document.getElementById('results').innerHTML = 
+                    '<pre class="error">❌ ERROR: Could not load the page. Make sure the server is running.</pre>';
+                document.getElementById('status').innerHTML = 
+                    '<span class="error">✗ Connection failed</span>';
+            };
+        }
+    </script>
+</body>
+</html>
