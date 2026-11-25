@@ -1,0 +1,13 @@
+# Backup files
+index-backup*.html
+
+# Test files
+test-console.html
+test-verification.ps1
+verify-*.html
+
+# Documentation files (optional - keeping them for now)
+# BANNER-CHANGES.md
+# BEFORE-AFTER-COMPARISON.md
+# CART-CLOSE-BUTTON-CHANGE.md
+# CHANGES-SUMMARY.md

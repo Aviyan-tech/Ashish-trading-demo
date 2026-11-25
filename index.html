@@ -541,13 +541,29 @@
 
         .product-image {
             position: relative;
-            aspect-ratio: 4 / 3;
-            max-height: 220px;
-            background: var(--sky-50);
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            background: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            padding: 8px;
+        }
+
+        .product-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+        }
+
+        .product-icon-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .product-icon {
@@ -555,15 +571,6 @@
             height: 56px;
             opacity: 0.8;
         }
-
-        .product-image.battery-bg { background: linear-gradient(to bottom, #eff6ff, #dbeafe); }
-        .product-image.panel-bg { background: linear-gradient(to bottom, #fffbeb, #fef3c7); }
-        .product-image.heater-bg { background: linear-gradient(to bottom, #fff7ed, #fed7aa); }
-        .product-image.pump-bg { background: linear-gradient(to bottom, #ecfeff, #cffafe); }
-        .product-image.inverter-bg { background: linear-gradient(to bottom, #eef2ff, #e0e7ff); }
-        .product-image.controller-bg { background: linear-gradient(to bottom, #f5f3ff, #ddd6fe); }
-        .product-image.light-bg { background: linear-gradient(to bottom, #fefce8, #fef9c3); }
-        .product-image.default-bg { background: linear-gradient(to bottom, #f8fafc, var(--sky-50)); }
 
         .product-icon.battery { color: #3b82f6; }
         .product-icon.panel { color: #f59e0b; }
@@ -1138,6 +1145,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            background: white;
+            padding: 20px;
+            max-height: 360px;
+            overflow: hidden;
+        }
+
+        .modal-image img {
+            width: 100%;
+            height: 100%;
+            max-height: 320px;
+            object-fit: contain;
         }
 
         .modal-image i {
@@ -1244,18 +1262,27 @@
         }
 
         .mini-cart-close {
-            background: none;
+            background: #e53935;
             border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .mini-cart-close:hover {
+            background: #c62828;
         }
 
         .mini-cart-close i {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             color: white;
+            stroke-width: 3;
         }
 
         .mini-cart-body {
@@ -1800,7 +1827,178 @@
             margin-bottom: 40px;
         }
 
-        /* Category Cards */
+        /* Premium Category Cards with Product Images */
+        .category-card-img {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            height: 100%;
+        }
+
+        .category-card-img:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.1);
+            border-color: var(--amber-500);
+        }
+
+        .category-img-box {
+            width: 140px;
+            height: 140px;
+            background: #fafafa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .category-product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .category-card-img:hover .category-product-img {
+            transform: scale(1.05);
+        }
+
+        .category-icon-backup {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom, #f1f5f9, #e2e8f0);
+        }
+
+        .category-icon-backup i {
+            width: 60px;
+            height: 60px;
+            color: var(--navy-900);
+            opacity: 0.4;
+        }
+
+        .category-text {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .category-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--navy-900);
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .category-products {
+            font-size: 13px;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        /* Legacy/Old Category Cards (keeping for backward compatibility) */
+        .category-card-new {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .category-card-new:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+            border-color: var(--amber-500);
+        }
+
+        .category-image-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* 1:1 aspect ratio */
+            background: white;
+            overflow: hidden;
+        }
+
+        .category-image-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .category-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .category-card-new:hover .category-image {
+            transform: scale(1.08);
+        }
+
+        .category-icon-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom, #f8fafc, #e2e8f0);
+        }
+
+        .category-icon-fallback i {
+            width: 80px;
+            height: 80px;
+            color: var(--navy-900);
+            opacity: 0.3;
+        }
+
+        .category-card-new:hover .category-icon-fallback i {
+            opacity: 0.5;
+        }
+
+        .category-info-new {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .category-name-new {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--navy-900);
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+        }
+
+        .category-count-new {
+            font-size: 13px;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        /* Legacy Category Cards (keep for backward compatibility) */
         .category-grid {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1924,71 +2122,179 @@
             margin: 0;
         }
 
-        /* Deal Banner */
-        .deal-banner {
-            background: linear-gradient(120deg, #ff8a00, #ff5e3a);
-            border-radius: 20px;
-            padding: 60px 40px;
-            text-align: center;
-            color: white;
+        /* Offer Slider - Full Width */
+        .offer-slider {
             position: relative;
+            width: 100%;
+            margin: 8px 0;
             overflow: hidden;
         }
 
-        .deal-banner::before {
-            content: '🔥';
+        .offer-slider__track {
+            position: relative;
+            width: 100%;
+        }
+
+        .offer-slider__slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .offer-slider__slide.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .offer-slider__image {
+            width: 100%;
+            height: auto;
+            display: block;
+            cursor: pointer;
+        }
+
+        .offer-slider__arrow {
             position: absolute;
-            font-size: 150px;
-            opacity: 0.1;
             top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .offer-slider__arrow:hover {
+            background: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .offer-slider__arrow i {
+            width: 24px;
+            height: 24px;
+            color: var(--navy-900);
+        }
+
+        .offer-slider__arrow.prev {
+            left: 20px;
+        }
+
+        .offer-slider__arrow.next {
+            right: 20px;
+        }
+
+        .offer-slider__dots {
+            position: absolute;
+            bottom: 20px;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .offer-slider__dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+
+        .offer-slider__dot.active {
+            background: var(--amber-500);
+            opacity: 1;
+        }
+
+        /* Legacy Deal Banner CSS (keeping for backward compatibility if needed elsewhere) */
+        .deal-banner {
+            background: var(--navy-900);
+            border-radius: 12px;
+            padding: 50px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+            color: white;
+        }
+
+        .deal-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .deal-label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: var(--amber-500);
+            text-transform: uppercase;
         }
 
         .deal-banner h2 {
-            font-size: 42px;
+            font-size: 36px;
             font-weight: 700;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
+            line-height: 1.2;
+            margin: 0;
         }
 
-        .countdown-timer {
-            display: flex;
+        .deal-description {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+        }
+
+        .deal-btn {
+            display: inline-flex;
+            align-items: center;
             justify-content: center;
-            gap: 20px;
-            margin: 30px 0;
-            position: relative;
-            z-index: 1;
+            padding: 14px 32px;
+            background: var(--amber-500);
+            color: var(--navy-900);
+            font-weight: 600;
+            font-size: 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            width: fit-content;
+            margin-top: 10px;
         }
 
-        .countdown-item {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 15px 25px;
+        .deal-btn:hover {
+            background: var(--amber-400);
+            transform: translateY(-2px);
+        }
+
+        .deal-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .deal-product-image {
+            width: 240px;
+            height: 240px;
             border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom, #eff6ff, #dbeafe);
         }
 
-        .countdown-number {
-            font-size: 32px;
-            font-weight: 700;
-            display: block;
-            color: white;
-        }
-
-        .countdown-label {
-            font-size: 12px;
-            opacity: 0.9;
-            color: white;
-        }
-
-        .deal-banner .hero-btn {
-            background: var(--navy-900);
-        }
-
-        .deal-banner .hero-btn:hover {
-            background: var(--navy-800);
+        .deal-icon {
+            width: 120px;
+            height: 120px;
+            color: #3b82f6;
         }
 
         /* Why Choose */
@@ -2062,95 +2368,6 @@
         .counter-label {
             font-size: 14px;
             opacity: 0.9;
-        }
-
-        /* Calculator */
-        .calculator-widget {
-            background: var(--light-bg);
-            border-radius: 12px;
-            padding: 40px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .calculator-widget h3 {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--primary-blue);
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        .calc-input-group {
-            margin-bottom: 20px;
-        }
-
-        .calc-input-group label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 10px;
-            color: var(--text-dark);
-        }
-
-        .calc-input-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 16px;
-            outline: none;
-        }
-
-        .calc-input-group input:focus {
-            border-color: var(--accent-orange);
-        }
-
-        .calc-btn {
-            width: 100%;
-            padding: 15px;
-            background: var(--accent-orange);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .calc-btn:hover {
-            background: #ea580c;
-        }
-
-        .calc-result {
-            margin-top: 25px;
-            padding: 25px;
-            background: white;
-            border-radius: 8px;
-            display: none;
-        }
-
-        .calc-result.show {
-            display: block;
-        }
-
-        .calc-result h4 {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--primary-blue);
-            margin-bottom: 15px;
-        }
-
-        .calc-result p {
-            font-size: 16px;
-            color: var(--text-gray);
-            margin-bottom: 10px;
-        }
-
-        .calc-result .highlight {
-            color: var(--accent-orange);
-            font-weight: 700;
-            font-size: 20px;
         }
 
         /* Testimonials */
@@ -2374,12 +2591,42 @@
                 font-size: 28px;
             }
 
-            .deal-banner h2 {
-                font-size: 28px;
+            .category-img-box {
+                width: 110px;
+                height: 110px;
+                margin-bottom: 12px;
             }
 
-            .countdown-timer {
-                flex-wrap: wrap;
+            .category-title {
+                font-size: 14px;
+            }
+
+            .category-products {
+                font-size: 12px;
+            }
+
+            .offer-slider__arrow {
+                display: none;
+            }
+
+            .deal-banner {
+                grid-template-columns: 1fr;
+                padding: 30px 25px;
+                gap: 30px;
+            }
+
+            .deal-banner h2 {
+                font-size: 24px;
+            }
+
+            .deal-product-image {
+                width: 180px;
+                height: 180px;
+            }
+
+            .deal-icon {
+                width: 90px;
+                height: 90px;
             }
 
             .newsletter-form {
@@ -2916,8 +3163,8 @@
 
             grid.innerHTML = pageProducts.map(product => `
                 <div class="product-card">
-                    <div class="product-image ${getCategoryBgClass(product.category)}">
-                        <i data-lucide="${getCategoryIcon(product.category, product.name)}" class="product-icon ${getCategoryIconClass(product.category)}"></i>
+                    <div class="product-image">
+                        ${getProductImageHTML(product)}
                         ${product.discountPercent > 0 ? `<div class="discount-badge">-${product.discountPercent}%</div>` : ''}
                         ${!product.inStock ? '<div class="sold-out-ribbon">SOLD OUT</div>' : ''}
                         ${product.inStock ? `
@@ -3078,9 +3325,11 @@
             const modal = document.getElementById('quickViewModal');
             const modalBody = document.getElementById('modalBody');
             
+            const productImageHTML = getProductImageHTML(product);
+            
             modalBody.innerHTML = `
-                <div class="modal-image ${getCategoryBgClass(product.category)}">
-                    <i data-lucide="${getCategoryIcon(product.category, product.name)}" class="product-icon ${getCategoryIconClass(product.category)}"></i>
+                <div class="modal-image">
+                    ${productImageHTML}
                 </div>
                 <div class="modal-details">
                     <h2>${product.name}</h2>
@@ -3287,7 +3536,7 @@
                 <section class="home-section">
                     <div class="section-header">
                         <h2 class="section-title">Shop by Category</h2>
-                        <p class="section-subtitle">Find the perfect solar solution for your needs</p>
+                        <p class="section-subtitle">Explore our range of solar and electrical solutions</p>
                     </div>
                     <div class="category-grid">
                         ${renderCategoryCards()}
@@ -3309,26 +3558,20 @@
                 </section>
 
                 <!-- Deal Banner -->
-                <section class="home-section">
-                    <div class="deal-banner">
-                        <h2>Up to 35% OFF on Solar Tubular Batteries</h2>
-                        <div class="countdown-timer" id="countdownTimer">
-                            <div class="countdown-item">
-                                <span class="countdown-number" id="hours">00</span>
-                                <span class="countdown-label">Hours</span>
-                            </div>
-                            <div class="countdown-item">
-                                <span class="countdown-number" id="minutes">00</span>
-                                <span class="countdown-label">Minutes</span>
-                            </div>
-                            <div class="countdown-item">
-                                <span class="countdown-number" id="seconds">00</span>
-                                <span class="countdown-label">Seconds</span>
-                            </div>
+                <!-- Limited Offer Slider - Full Width -->
+                <div class="offer-slider">
+                    <div class="offer-slider__track">
+                        <div class="offer-slider__slide active">
+                            <img src="images/offers/offer-1.png" alt="Limited offer: up to 35% off on solar tubular batteries" class="offer-slider__image" onclick="window.location.hash='#shop'; setTimeout(() => { searchQuery='Battery'; document.getElementById('searchInput').value='Battery'; applyFiltersAndSort(); }, 100);">
                         </div>
-                        <a href="#shop" class="hero-btn">Grab the Deal</a>
+                        <div class="offer-slider__slide">
+                            <img src="images/offers/offer-2.png" alt="Authorized dealer: inverters, UPS and charge controllers" class="offer-slider__image" onclick="window.location.hash='#shop'; setTimeout(() => { searchQuery='Inverter'; document.getElementById('searchInput').value='Inverter'; applyFiltersAndSort(); }, 100);">
+                        </div>
                     </div>
-                </section>
+                    <button class="offer-slider__arrow prev" onclick="offerSlider.prev()"><i data-lucide="chevron-left"></i></button>
+                    <button class="offer-slider__arrow next" onclick="offerSlider.next()"><i data-lucide="chevron-right"></i></button>
+                    <div class="offer-slider__dots"></div>
+                </div>
 
                 <!-- New Arrivals -->
                 <section class="home-section">
@@ -3388,28 +3631,6 @@
                         <div class="counter-item">
                             <span class="counter-number" data-target="48">0</span>
                             <div class="counter-label"><i data-lucide="package" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 5px;"></i>Products</div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Solar Savings Calculator -->
-                <section class="home-section">
-                    <div class="section-header">
-                        <h2 class="section-title">Solar Savings Calculator</h2>
-                        <p class="section-subtitle">Estimate your potential savings</p>
-                    </div>
-                    <div class="calculator-widget">
-                        <h3><i data-lucide="calculator" style="width: 24px; height: 24px; display: inline-block; vertical-align: middle; margin-right: 10px;"></i>Calculate Your Savings</h3>
-                        <div class="calc-input-group">
-                            <label>Monthly Electricity Bill (NPR)</label>
-                            <input type="number" id="billInput" placeholder="e.g. 5000">
-                        </div>
-                        <button class="calc-btn" onclick="calculateSavings()">Calculate</button>
-                        <div class="calc-result" id="calcResult">
-                            <h4>Estimated Results</h4>
-                            <p>Yearly Savings: <span class="highlight" id="yearlySavings">₨ 0</span></p>
-                            <p>Recommended Panel Size: <span class="highlight" id="panelSize">0 kW</span></p>
-                            <p>Payback Period: <span class="highlight" id="payback">0 years</span></p>
                         </div>
                     </div>
                 </section>
@@ -3488,7 +3709,7 @@
             // Initialize home page features
             setTimeout(() => {
                 initHeroSlider();
-                initCountdown();
+                initOfferSlider();
                 initCounters();
                 initTestimonialSlider();
                 setupNewsletterForm();
@@ -3498,14 +3719,14 @@
 
         function renderCategoryCards() {
             const categories = [
-                { name: 'Solar Water Heater', icon: 'thermometer-sun', category: 'Solar Water Heater' },
-                { name: 'Solar Panels', icon: 'sun', category: 'Solar Panels' },
-                { name: 'Inverter/UPS', icon: 'zap', category: 'Inverter/UPS' },
-                { name: 'Battery', icon: 'battery-charging', category: 'Battery' },
-                { name: 'Charge Controller', icon: 'cpu', category: 'Charge Controller' },
-                { name: 'Solar Pump', icon: 'droplets', category: 'Solar Pump' },
-                { name: 'Solar LED Lights', icon: 'lightbulb', category: 'Solar LED Lights' },
-                { name: 'All Products', icon: 'layout-grid', category: null }
+                { name: 'Solar Water Heater', icon: 'thermometer-sun', category: 'Solar Water Heater', image: 'water-heater.png' },
+                { name: 'Solar Panels', icon: 'sun', category: 'Solar Panels', image: 'solar-panel.png' },
+                { name: 'Inverter/UPS', icon: 'zap', category: 'Inverter/UPS', image: 'inverter.png' },
+                { name: 'Battery', icon: 'battery-charging', category: 'Battery', image: 'battery.png' },
+                { name: 'Charge Controller', icon: 'cpu', category: 'Charge Controller', image: 'charge-controller.png' },
+                { name: 'Solar Pump', icon: 'droplets', category: 'Solar Pump', image: 'solar-pump.png' },
+                { name: 'Solar LED Lights', icon: 'lightbulb', category: 'Solar LED Lights', image: 'led-light.png' },
+                { name: 'All Products', icon: 'layout-grid', category: null, image: 'all-products.png' }
             ];
             
             return categories.map(cat => {
@@ -3514,10 +3735,21 @@
                     : products.filter(p => p.category === cat.category).length;
                 
                 return `
-                    <div class="category-card" data-category="${cat.category}" onclick="navigateToCategory('${cat.category}')">
-                        <div class="category-icon"><i data-lucide="${cat.icon}"></i></div>
-                        <div class="category-name">${cat.name}</div>
-                        <div class="category-count">${count} product${count !== 1 ? 's' : ''}</div>
+                    <div class="category-card-img" data-category="${cat.category}" onclick="navigateToCategory('${cat.category}')">
+                        <div class="category-img-box">
+                            <img src="images/categories/${cat.image}" 
+                                 alt="${cat.name}" 
+                                 class="category-product-img"
+                                 loading="lazy"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="category-icon-backup" style="display: none;">
+                                <i data-lucide="${cat.icon}"></i>
+                            </div>
+                        </div>
+                        <div class="category-text">
+                            <h3 class="category-title">${cat.name}</h3>
+                            <p class="category-products">${count} Product${count !== 1 ? 's' : ''}</p>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -3531,8 +3763,8 @@
             
             return best.map(product => `
                 <div class="product-card">
-                    <div class="product-image ${getCategoryBgClass(product.category)}">
-                        <i data-lucide="${getCategoryIcon(product.category, product.name)}" class="product-icon ${getCategoryIconClass(product.category)}"></i>
+                    <div class="product-image">
+                        ${getProductImageHTML(product)}
                         ${product.discountPercent > 0 ? `<div class="discount-badge">-${product.discountPercent}%</div>` : ''}
                         <div class="product-actions">
                             <button class="action-btn" onclick="addToWishlist(${product.id})" title="Add to wishlist"><i data-lucide="heart"></i></button>
@@ -3560,8 +3792,8 @@
             
             return latest.map(product => `
                 <div class="product-card">
-                    <div class="product-image ${getCategoryBgClass(product.category)}">
-                        <i data-lucide="${getCategoryIcon(product.category, product.name)}" class="product-icon ${getCategoryIconClass(product.category)}"></i>
+                    <div class="product-image">
+                        ${getProductImageHTML(product)}
                         ${product.discountPercent > 0 ? `<div class="discount-badge">-${product.discountPercent}%</div>` : ''}
                         <div class="product-actions">
                             <button class="action-btn" onclick="addToWishlist(${product.id})" title="Add to wishlist"><i data-lucide="heart"></i></button>
@@ -3593,6 +3825,75 @@
                     applyFiltersAndSort();
                 }, 100);
             }
+        }
+
+        // Get product image - Single source of truth for all product images
+        function getProductImage(product) {
+            // 1. Check if product has its own image field
+            if (product.image) {
+                return `images/products/${product.image}`;
+            }
+            
+            // 2. Match by keywords in product NAME (case-insensitive)
+            const name = product.name.toLowerCase();
+            
+            if (name.includes('panel')) {
+                return 'images/categories/solar-panel.png';
+            }
+            if (name.includes('heater')) {
+                return 'images/categories/water-heater.png';
+            }
+            if (name.includes('battery')) {
+                return 'images/categories/battery.png';
+            }
+            if (name.includes('inverter') || name.includes('ups')) {
+                return 'images/categories/inverter.png';
+            }
+            if (name.includes('controller')) {
+                return 'images/categories/charge-controller.png';
+            }
+            if (name.includes('pump')) {
+                return 'images/categories/solar-pump.png';
+            }
+            if (name.includes('street light') || name.includes('led') || name.includes('light') || name.includes('bulb')) {
+                return 'images/categories/led-light.png';
+            }
+            if (name.includes('kit')) {
+                return 'images/categories/all-products.png';
+            }
+            
+            // 3. Else match by category
+            const categoryMap = {
+                'Solar Water Heater': 'water-heater.png',
+                'Solar Panels': 'solar-panel.png',
+                'Inverter/UPS': 'inverter.png',
+                'Battery': 'battery.png',
+                'Charge Controller': 'charge-controller.png',
+                'Solar Pump': 'solar-pump.png',
+                'Solar LED Lights': 'led-light.png'
+            };
+            
+            if (categoryMap[product.category]) {
+                return `images/categories/${categoryMap[product.category]}`;
+            }
+            
+            // 4. Else use neutral placeholder
+            return 'images/categories/all-products.png';
+        }
+
+        // Generate product image HTML - Uses getProductImage for consistency
+        function getProductImageHTML(product) {
+            const imagePath = getProductImage(product);
+            return `
+                <img src="${imagePath}" 
+                     alt="${product.name}" 
+                     class="product-photo"
+                     loading="lazy"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="product-icon-fallback" style="display: none;">
+                    <i data-lucide="${getCategoryIcon(product.category, product.name)}" class="product-icon ${getCategoryIconClass(product.category)}"></i>
+                </div>
+            `;
         }
 
         // Hero Slider
@@ -3640,35 +3941,76 @@
             }
         };
 
+        // Offer Slider
+        const offerSlider = {
+            currentSlide: 0,
+            totalSlides: 2,
+            interval: null,
+            isPaused: false,
+            
+            init() {
+                this.renderDots();
+                this.start();
+                this.addHoverListeners();
+            },
+            
+            renderDots() {
+                const container = document.querySelector('.offer-slider__dots');
+                if (!container) return;
+                container.innerHTML = Array(this.totalSlides).fill(0).map((_, i) => 
+                    `<button class="offer-slider__dot ${i === 0 ? 'active' : ''}" onclick="offerSlider.goTo(${i})"></button>`
+                ).join('');
+            },
+            
+            goTo(index) {
+                const slides = document.querySelectorAll('.offer-slider__slide');
+                const dots = document.querySelectorAll('.offer-slider__dot');
+                
+                if (slides.length === 0) return;
+                
+                slides[this.currentSlide].classList.remove('active');
+                if (dots[this.currentSlide]) dots[this.currentSlide].classList.remove('active');
+                
+                this.currentSlide = index;
+                
+                slides[this.currentSlide].classList.add('active');
+                if (dots[this.currentSlide]) dots[this.currentSlide].classList.add('active');
+            },
+            
+            next() {
+                this.goTo((this.currentSlide + 1) % this.totalSlides);
+            },
+            
+            prev() {
+                this.goTo((this.currentSlide - 1 + this.totalSlides) % this.totalSlides);
+            },
+            
+            start() {
+                this.stop();
+                this.interval = setInterval(() => {
+                    if (!this.isPaused) this.next();
+                }, 5000);
+            },
+            
+            stop() {
+                if (this.interval) clearInterval(this.interval);
+            },
+            
+            addHoverListeners() {
+                const slider = document.querySelector('.offer-slider');
+                if (slider) {
+                    slider.addEventListener('mouseenter', () => this.isPaused = true);
+                    slider.addEventListener('mouseleave', () => this.isPaused = false);
+                }
+            }
+        };
+
         function initHeroSlider() {
             heroSlider.init();
         }
 
-        // Countdown Timer
-        function initCountdown() {
-            function updateCountdown() {
-                const now = new Date();
-                const tomorrow = new Date(now);
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                tomorrow.setHours(0, 0, 0, 0);
-                
-                const diff = tomorrow - now;
-                
-                const hours = Math.floor(diff / (1000 * 60 * 60));
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-                
-                const hoursEl = document.getElementById('hours');
-                const minutesEl = document.getElementById('minutes');
-                const secondsEl = document.getElementById('seconds');
-                
-                if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
-                if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
-                if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
-            }
-            
-            updateCountdown();
-            setInterval(updateCountdown, 1000);
+        function initOfferSlider() {
+            offerSlider.init();
         }
 
         // Animated Counters
@@ -3726,29 +4068,6 @@
                 goToTestimonial((currentTestimonial + 1) % totalTestimonials);
             }, 5000);
         }
-
-        // Calculator
-        window.calculateSavings = function() {
-            const billInput = document.getElementById('billInput');
-            const bill = parseFloat(billInput.value);
-            
-            if (!bill || bill <= 0) {
-                showToast('Please enter a valid bill amount');
-                return;
-            }
-            
-            // Simple demo calculation
-            const yearlySavings = Math.round(bill * 12 * 0.7); // 70% savings estimate
-            const panelSize = Math.round((bill / 1000) * 1.5 * 10) / 10; // Rough kW estimate
-            const payback = Math.round((panelSize * 80000) / yearlySavings * 10) / 10; // Rough payback
-            
-            document.getElementById('yearlySavings').textContent = formatPrice(yearlySavings);
-            document.getElementById('panelSize').textContent = panelSize + ' kW';
-            document.getElementById('payback').textContent = payback + ' years';
-            document.getElementById('calcResult').classList.add('show');
-            
-            showToast('Calculation complete! These are estimated values.', 'success');
-        };
 
         // Newsletter Form
         function setupNewsletterForm() {
